@@ -1,7 +1,9 @@
 package com.example.service;
 
 import com.example.model.User;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface UserService {
     /**
      * 根据学生id查询用户

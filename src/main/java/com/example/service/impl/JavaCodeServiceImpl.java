@@ -3,6 +3,7 @@ package com.example.service.impl;
 import com.example.service.JavaCodeService;
 import com.example.utils.CodeFileWriter;
 import com.example.utils.RedirectedPrintStream;
+import org.springframework.stereotype.Service;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -13,6 +14,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+@Service
 public class JavaCodeServiceImpl implements JavaCodeService {
 
     public String runJavaClass(String code){
