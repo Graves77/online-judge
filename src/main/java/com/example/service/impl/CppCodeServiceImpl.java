@@ -5,15 +5,13 @@ import com.example.utils.CodeFileWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.Scanner;
 
 @Slf4j
 @Service
 public class CppCodeServiceImpl implements CppCodeService {
-    public String runCppCode(String code) {
+    public String runCppCode(String code,String demo) {
         try {
             // 保存C++代码到临时文件
             String fileName = "UserSubmittedCode.cpp";
@@ -25,7 +23,7 @@ public class CppCodeServiceImpl implements CppCodeService {
             // 编译C++代码
             if (compileCppCode(filePath)) {
                 // 运行生成的可执行文件
-                return runCompiledCode(filePath);
+                return runCompiledCode(filePath,demo);
             } else {
                 return "Compilation Error";
             }
@@ -47,18 +45,30 @@ public class CppCodeServiceImpl implements CppCodeService {
         }
     }
 
-    private String runCompiledCode(String executablePath) {
+    private String runCompiledCode(String executablePath,String demo) {
         try {
-            log.info(executablePath);
+            //编辑exe文件名
             String exeFileName = executablePath.substring(executablePath.lastIndexOf("\\")+1, executablePath.lastIndexOf("."));
 
+            //对cpp文件进行编译生成exe文件
             Runtime.getRuntime().exec("g++ " + executablePath + " -o " + "C:\\Users\\Graves\\Desktop\\" +exeFileName  + ".exe");
 
-            //String exePath = executablePath.substring(0, executablePath.lastIndexOf("\\")+1) + "C:\\Users\\Graves\\Desktop\\" +exeFileName + ".exe";
-
-            //Process process = Runtime.getRuntime().exec("C:\\Users\\Graves\\Desktop\\" +exeFileName + ".exe");
             Thread.sleep(1000);
+            //运行exe文件
             Process process = new ProcessBuilder("C:\\Users\\Graves\\Desktop\\" +exeFileName + ".exe").start();
+
+            // 获取标准输入流，用于向子进程写入数据
+            OutputStream outputStream = process.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+
+            //传入到控制台
+            writer.write(demo);
+            writer.newLine();
+            writer.flush();
+            // 关闭标准输入流，表示输入结束
+            outputStream.close();
+
+            // 获取子进程的输出
             InputStream inputStream = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder output = new StringBuilder();

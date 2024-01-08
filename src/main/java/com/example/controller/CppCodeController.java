@@ -1,8 +1,10 @@
 package com.example.controller;
 
+import com.example.model.JsonResult;
 import com.example.service.CppCodeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -16,7 +18,10 @@ public class CppCodeController {
     @Autowired
     public CppCodeService cppCodeService;
     @PostMapping("/runCppCode")
-    public String runCppCode(String code) {
-        return cppCodeService.runCppCode(code);
+    public JsonResult runCppCode(String code, String demo) {
+        if(StringUtils.hasText(code)){
+            return new JsonResult(null,"400","参数为空");
+        }
+        return new JsonResult(cppCodeService.runCppCode(code,demo));
     }
 }
