@@ -1,8 +1,8 @@
-package com.example.controller;
+package com.example.controller.user;
 
 import com.example.model.JsonResult;
-import com.example.model.User;
-import com.example.service.impl.UserServiceImpl;
+import com.example.model.user.User;
+import com.example.service.user.userImpl.UserServiceImpl;
 import com.example.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @Slf4j
 @RequestMapping("/user")
@@ -21,11 +20,11 @@ public class UserController {
     private UserServiceImpl userService;
 
     @PostMapping("/login")//登录
-    public JsonResult login(String name, String password){
+    public JsonResult login(String userId, String password){
         try{
-            if(StringUtils.hasText(name)) return new JsonResult("用户名不能为空","400","fail");
-            if(StringUtils.hasText(password)) return new JsonResult("密码不能为空","400","fail");
-            User user=userService.selectUserByName(name);
+            if(!StringUtils.hasText(userId)||!StringUtils.hasText(password))
+                return new JsonResult("用户信息不能为空","400","fail");
+            User user=userService.selectUserByName(userId);
             if(user ==null){
                 return new JsonResult("登录失败，不存在该用户","400","fail");
             }
@@ -33,7 +32,7 @@ public class UserController {
                 //生成token
                 JwtUtils jwt = JwtUtils.getInstance();
                 String token = jwt
-                        .setClaim("name",name)
+                        .setClaim("userId",userId)
                         .setClaim("id",user.getId())
                         .generateToken();
                 Map<String,String> tmp = new HashMap<>();
@@ -51,16 +50,16 @@ public class UserController {
 
 
     @PostMapping("/register")//注册：姓名和密码
-    public JsonResult register(String name,String password,String confirm){
+    public JsonResult register(String userId,String password,String confirm){
         try{
-            if(StringUtils.hasText(name)) return new JsonResult("用户名不能为空","400","fail");
-            if(StringUtils.hasText(password)) return new JsonResult("密码不能为空","400","fail");
+            if(!StringUtils.hasText(userId)) return new JsonResult("学号不能为空","400","fail");
+            if(!StringUtils.hasText(password)) return new JsonResult("密码不能为空","400","fail");
             if(!password.equals(confirm)){return new JsonResult("两次密码不同","400","fail");}
-            User user=userService.selectUserByName(name);
+            User user=userService.selectUserByName(userId);
             if(user !=null){
                 return new JsonResult("注册失败，该用户已经存在","400","fail");
             }
-            if(userService.insertUser(name, password)==1){
+            if(userService.insertUser(userId, password)==1){
                 return new JsonResult("注册成功","201");
             }
         }
@@ -73,16 +72,15 @@ public class UserController {
 
 
     @PostMapping("/updateUser")//更新信息，添加邮箱和电话，需要提供姓名
-    public JsonResult updateUser(String name,String  email,String phone){
+    public JsonResult updateUser(String name,String userId){
         try{
-            if(StringUtils.hasText(name)) return new JsonResult("用户名不能为空","400","fail");
-            if(StringUtils.hasText(email)) return new JsonResult("邮箱不能为空","400","fail");
-            if(StringUtils.hasText(phone)) return new JsonResult("电话不能为空","400","fail");
-            User user=userService.selectUserByName(name);
+            if(!StringUtils.hasText(name)) return new JsonResult("用户名不能为空","400","fail");
+            if(!StringUtils.hasText(userId)) return new JsonResult("学号不能为空","400","fail");
+            User user=userService.selectUserByName(userId);
             if(user ==null){
                 return new JsonResult("更新失败，该用户不存在","400","fail");
             }
-            if(userService.updateUser(name, email, phone)==1){
+            if(userService.updateUser(name, userId)==1){
                 return new JsonResult("信息补充成功","201");
             }
         }
@@ -94,16 +92,16 @@ public class UserController {
     }
 
     @PostMapping("/updatepassword")//修改密码
-    public JsonResult updatePassword(String name, String password,String confirm){
+    public JsonResult updatePassword(String userId, String password,String confirm){
         try{
-            if(StringUtils.hasText(name)) return new JsonResult("用户名不能为空","400","fail");
-            if(StringUtils.hasText(password)) return new JsonResult("密码不能为空","400","fail");
+            if(!StringUtils.hasText(userId)) return new JsonResult("学号不能为空","400","fail");
+            if(!StringUtils.hasText(password)) return new JsonResult("密码不能为空","400","fail");
             if(!password.equals(confirm)){return new JsonResult("两次密码不同","400","fail");}
-            User user=userService.selectUserByName(name);
+            User user=userService.selectUserByName(userId);
             if(user ==null){
                 return new JsonResult("修改失败，该用户不存在","400","fail");
             }
-            if(userService.updatePassword(name, password)==1){
+            if(userService.updatePassword(userId, password)==1){
                 return new JsonResult("密码修改成功","201");
             }
         }
@@ -116,8 +114,8 @@ public class UserController {
     }
 
     @PostMapping("/information")
-    public JsonResult information(String name){
-        User user = userService.information(name);
+    public JsonResult information(String userId){
+        User user = userService.information(userId);
         if(user == null){
             return new JsonResult("不存在该对象","400","失败");
         }

@@ -1,9 +1,9 @@
-package com.example.service.impl;
+package com.example.service.user.userImpl;
 
 
-import com.example.mapper.UserMapper;
-import com.example.model.User;
-import com.example.service.UserService;
+import com.example.mapper.user.UserMapper;
+import com.example.model.user.User;
+import com.example.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +18,18 @@ public class UserServiceImpl implements UserService {
     public User selectUserByName(String name){return userMapper.selectUserByName(name);}
 
     @Override
-    public int insertUser(String name,String password) {
-        return userMapper.saveUser(name,password);
+    public int insertUser(String userId,String password) {
+        return userMapper.saveUser(userId,password);
     }
 
     @Override
-    public int updateUser(String name, String email, String phone) {
-        return userMapper.updateUser(name, email, phone);
+    public int updateUser(String name, String phone) {
+        return userMapper.updateUser(name, phone);
     }
 
     @Override
-    public int updatePassword(String name, String password) {
-        return userMapper.updatePassword(name, password);
+    public int updatePassword(String userId, String password) {
+        return userMapper.updatePassword(userId, password);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User information(String name) {
-        return userMapper.information(name);
+    public User information(String userId) {
+        return userMapper.information(userId);
     }
 }

@@ -1,6 +1,6 @@
-package com.example.service;
+package com.example.service.user;
 
-import com.example.model.User;
+import com.example.model.user.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +34,7 @@ public interface UserService {
      * @param phone
      * @return int
      */
-    int updateUser(String name,String email,String phone);
+    int updateUser(String name,String phone);
 
     /**
      * 修改密码

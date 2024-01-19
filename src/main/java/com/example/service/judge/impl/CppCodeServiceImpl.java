@@ -1,12 +1,11 @@
-package com.example.service.impl;
+package com.example.service.judge.impl;
 
-import com.example.service.CppCodeService;
+import com.example.service.judge.CppCodeService;
 import com.example.utils.CodeFileWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.Scanner;
 
 @Slf4j
 @Service
@@ -14,7 +13,7 @@ public class CppCodeServiceImpl implements CppCodeService {
     public String runCppCode(String code,String demo) {
         try {
             // 保存C++代码到临时文件
-            String fileName = "UserSubmittedCode.cpp";
+            String fileName = "CppDemo.cpp";
             //String filePath = System.getProperty("java.io.tmpdir") + "/" + fileName;
             String filePath = "C:\\Users\\Graves\\Desktop\\" + fileName;
 

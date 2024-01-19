@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应mapper接口所在的位置-->
+<mapper namespace="com.example.mapper.question.QuestionMapper">
+
+    <!--插入问题-->
+    <insert id="insertQuestion" parameterType="com.example.model.question.Question">
+        insert into oj_question values (
+                                           #{id},
+                                           #{questionName},
+                                           #{inputStyle},
+                                           #{outputStyle},
+                                           #{inputSample},
+                                           #{outputSample},
+                                           #{description},
+                                           #{totalPass},
+                                           0.0,
+                                           #{privateState}
+                                       )
+    </insert>
+    <!--插入测试样例-->
+    <insert id="insertTestSamples" parameterType="com.example.model.question.Question">
+        insert into oj_question_sample values (
+                                                  null,
+                                                  #{id},
+                                                  #{questionName},
+                                                  #{testSamples.sampleInput},
+                                                  #{testSamples.sampleOutput}
+                                              )
+    </insert>
+
+</mapper>
