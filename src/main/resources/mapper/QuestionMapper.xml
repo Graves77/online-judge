@@ -12,10 +12,17 @@
                                            #{questionName},
                                            #{inputStyle},
                                            #{outputStyle},
+                                           #{dataRange},
                                            #{inputSample},
                                            #{outputSample},
+                                           #{difficulty},
+                                           #{timeLimit},
+                                           #{memoryLimit},
                                            #{description},
                                            #{totalPass},
+                                           #{totalAttempt},
+                                           #{resource},
+                                           #{tag},
                                            0.0,
                                            #{privateState}
                                        )
@@ -31,4 +38,77 @@
                                               )
     </insert>
 
+    <!--得到测试样例 根据id-->
+    <select id="getTestSample" resultType="com.example.model.question.TestSamples">
+        select * from oj_question_sample where qid = #{id}
+    </select>
+
+    <update id="changeQuestionInfo" parameterType="com.example.model.question.Question">
+        update oj_question set
+                               question_name = #{questionName},
+                               input_style = #{inputStyle},
+                               output_style = #{outputStyle},
+                               input_sample = #{inputSample},
+                               output_sample = #{outputSample},
+                               data_range = #{dataRange},
+                               difficulty = #{difficulty},
+                               time_limit = #{timeLimit},
+                               memory_limit = #{memoryLimit},
+                               description = #{description},
+                               resource = #{resource},
+                               tag = #{tag}
+        where id = #{id}
+    </update>
+
+    <update id="changeQuestionTestSample" parameterType="com.example.model.question.TestSamples">
+        update oj_question_sample set
+                                      question_name = #{questionName},
+                                      sample_input = #{sampleInput},
+                                      sample_output = #{sampleOutput}
+        where qid = #{qid}
+    </update>
+
+    <delete id="deleteQuestion">
+        delete from oj_question where id = #{qid}
+    </delete>
+
+    <!--得到问题根据id-->
+    <select id="queryQuestion" resultType="com.example.model.question.Question">
+        select * from oj_question where id = #{id} and private_state = 0
+    </select>
+
+    <!--    统计所有题目数量-->
+    <select id="countQuestion" resultType="int">
+        select count(id) from oj_question where private_state = 0
+    </select>
+
+    <select id="getUserResolveQid" resultType="long">
+        select qid from oj_user_resolve where uid = #{uid}
+    </select>
+
+    <!--    得到全部题目-->
+    <!--    select * from oj_question where  private_state = 0 limit #{page},15-->
+    <select id="queryQuestionList" resultType="com.example.model.question.Question">
+        select * from oj_question where  private_state = 0 limit #{page},15
+    </select>
+
+    <select id="searchQuestion" resultType="com.example.model.question.Question">
+        select * from oj_question where question_name like concat("%",#{search} ,"%")  limit #{page},15
+    </select>
+
+    <!--得到题目的时间限制-->
+    <select id="getQuestionTimeLimit" resultType="int">
+        select time_limit,memory_limit from oj_question where id = #{id}
+    </select>
+    <!--    得到题目的空间限制-->
+    <select id="getQuestionMemoryLimit" resultType="int">
+        select memory_limit from oj_question where id = #{id}
+    </select>
+    <update id="addTotalCount">
+        update oj_question set total_attempt = total_attempt+1
+        <if test="param1 == 1">
+            ,total_pass = total_pass + 1
+        </if>
+        where id = #{id}
+    </update>
 </mapper>

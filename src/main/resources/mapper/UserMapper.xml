@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应mapper接口所在的位置-->
+<mapper namespace="com.example.mapper.user.UserMapper">
+    <insert id="addUser" parameterType="com.example.model.user.User">
+        insert into oj_user values (
+                                       #{id},
+                                       #{nickName},
+                                       #{studentId},
+                                       #{password},
+                                       #{rank},
+                                       #{location},
+                                       #{school},
+                                       #{tag},
+                                       #{gender},
+                                       #{easyResolve},
+                                       #{meddleResolve},
+                                       #{hardResolve},
+                                       #{nightmareResolve},
+                                       #{role},
+                                       #{url},
+                                       #{sign},
+                                        0
+                                   )
+    </insert>
+    <select id="existUser" resultType="int">
+        select count(id) from oj_user where studentId = #{studentId}
+    </select>
+    <select id="getUser" resultType="com.example.model.user.User">
+        select * from oj_user where studentId = #{studentId}
+    </select>
+    <select id="getUserById" resultType="com.example.model.user.User">
+        select * from oj_user where id = #{id}
+    </select>
+<!--得到所有用户-->
+    <select id="getUserListForSort" resultType="com.example.model.user.User">
+        select * from oj_user order by experience desc
+    </select>
+    <select id="getUserList" resultType="com.example.model.user.User">
+        select * from oj_user limit #{page},15
+    </select>
+    <update id="changeUserResolve">
+        update oj_user
+        <trim prefix="set" suffixOverrides=",">
+            <if test="difficulty == '简单'">
+                easy_resolve=easy_resolve+1,
+            </if>
+            <if test="difficulty == '中等'">
+                meddle_resolve=meddle_resolve+1,
+            </if>
+            <if test="difficulty == '困难'">
+                hard_resolve=hard_resolve+1,
+            </if>
+            <if test="difficulty == '噩梦'">
+                nightmare_resolve=nightmare_resolve+1,
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+
+<!--修改个人信息-->
+    <update id="changeUserInfo" parameterType="com.example.model.user.User">
+        update oj_user
+            set nick_name = #{nickName},
+                school = #{school},
+                location = #{location},
+                url = #{url},
+                gender = #{gender},
+                tag = #{tag},
+                sign = #{sign}
+        where id = #{id}
+    </update>
+
+
+    <select id="userCount" resultType="Integer">
+        select count(id) from oj_user
+    </select>
+</mapper>

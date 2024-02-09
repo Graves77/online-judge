@@ -4,30 +4,33 @@ import com.example.model.user.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @Mapper
 public interface UserMapper {
 
+    boolean addUser(User user);
 
-    @Insert("INSERT INTO user(userId,password,isAdmin) VALUES(#{userId},#{password},0) ")//添加新用户
-    int saveUser(@Param("userId") String userId, @Param("password") String password);
+    int existUser(String studentId);
+
+    User getUser(String studentId);
+
+    /**
+     * 得到用户列表根据经验值排序
+     * @return
+     */
+    List<User> getUserListForSort();
+
+    List<User> getUserList(Integer page);
+
+    User getUserById(long id);
+    boolean changeUserResolve(String difficulty,long id);
 
 
-    @Select("select * from user where userId=#{userId}")
-    User selectUserByName(@Param("userId")String userId);
+    boolean changeUserInfo(User user);
 
-    @Select("select * from user where id=#{id}")
-    User selectUserById(@Param("id")String id);
 
-    @Update("UPDATE user set name=#{name} WHERE userId =#{userId}")
-    int updateUser(@Param("name")String name,@Param("userId")String userId);
+    Integer userCount();
 
-    @Update("UPDATE `user`   set `password`=#{password}  WHERE `userId`=#{userId}")//更改密码
-    int updatePassword(@Param("userId")String userId,@Param("password")String password);
-
-    @Select("SELECT `password`  from `user`  where name=#{name}")
-    String findPassword(@Param("name") String name);
-
-    @Select("SELECT *  from `user`  where userId=#{userId}")
-    User information(@Param("userId") String userId);
 }

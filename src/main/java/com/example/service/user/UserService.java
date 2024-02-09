@@ -1,55 +1,22 @@
 package com.example.service.user;
 
+import com.example.model.JsonResult;
 import com.example.model.user.User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public interface UserService {
-    /**
-     * 根据学生id查询用户
-     * @param id
-     * @return user
-     */
-    User selectUserById(String id);
+    JsonResult registerUser(User user);
 
-    /**
-     * 根据学生name查询用户
-     * @param name
-     * @return user
-     */
-    User selectUserByName(String name);
+    User login(User user);
 
-    /**
-     * 给学生姓名和密码，插入新用户
-     * @param name
-     * @param password
-     * @return int
-     */
-    int insertUser(String name,String password);
+    boolean changeUserInfo(User user);
 
-    /**
-     * 当注册成功后，到用户界面添加新信息
-     * @param name
-     * @param email
-     * @param phone
-     * @return int
-     */
-    int updateUser(String name,String phone);
+    User loadUserInfo(long id);
 
-    /**
-     * 修改密码
-     * @param name
-     * @param password
-     * @return int
-     */
-    int updatePassword(String name,String password);
 
-    /**
-     * 登录验证
-     * @param name
-     * @return
-     */
-    String findPassword(String name);
+    Map<String,Object> getUserList(Integer page);
 
-    User information(String name);
 }

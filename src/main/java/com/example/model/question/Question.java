@@ -2,13 +2,17 @@ package com.example.model.question;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 
 @Data
-public class Question implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Question {
     /**
      * 题目id
      */
@@ -35,6 +39,22 @@ public class Question implements Serializable {
      */
     private String outputSample;
     /**
+     * 数据范围说明
+     */
+    private String dataRange;
+    /**
+     * 难度
+     */
+    private String difficulty;
+    /**
+     * 时间限制
+     */
+    private int timeLimit;
+    /**
+     * 空间限制
+     */
+    private int memoryLimit;
+    /**
      * 题目描述
      */
     private String description;
@@ -42,6 +62,18 @@ public class Question implements Serializable {
      * 总通过
      */
     private int totalPass;
+    /**
+     * 总尝试
+     */
+    private int totalAttempt;
+    /**
+     * 问题来源
+     */
+    private String resource;
+    /**
+     * 问题标签 （json数组）
+     */
+    private String tag;
     /**
      * 测试用力对象合集 （上传题目用）
      */

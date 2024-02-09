@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应mapper接口所在的位置-->
+<mapper namespace="com.example.mapper.question.RecordMapper">
+
+    <insert id="addRecord" parameterType="com.example.model.judge.SubmitRecord">
+        insert into oj_submit_record values (
+                                             #{id},
+                                             #{uid},
+                                             #{qid},
+                                             #{questionName},
+                                             #{time},
+                                             #{memory},
+                                             #{language},
+                                             #{code},
+                                             #{submitTime},
+                                             #{title},
+                                             #{message},
+                                             #{testSample},
+                                             #{userName}
+                                            )
+    </insert>
+    <insert id="addMatchRecord" parameterType="com.example.model.judge.SubmitRecord">
+        insert into oj_match_record values (
+                                                #{param1.id},
+                                                #{param1.uid},
+                                                #{param1.qid},
+                                                #{param2},
+                                                #{param1.questionName},
+                                                #{param1.time},
+                                                #{param1.memory},
+                                                #{param1.language},
+                                                #{param1.code},
+                                                #{param1.submitTime},
+                                                #{param1.title},
+                                                #{param1.message},
+                                                #{param1.testSample},
+                                                #{param1.userName}
+                                            )
+    </insert>
+    <select id="getSubmitRecordList" resultType="com.example.model.judge.SubmitRecord">
+        select * from oj_submit_record where uid = #{uid} and qid = #{qid} order by id desc limit #{page},10
+    </select>
+
+
+    <select id="getSubmitRecordListWithQid" resultType="com.example.model.judge.SubmitRecord">
+        select * from oj_submit_record where  qid = #{qid}  order by id desc limit #{page},10
+    </select>
+
+    <select id="getSubmitRecordListWithUid" resultType="com.example.model.judge.SubmitRecord">
+        select * from oj_submit_record where  uid = #{uid}  order by id desc limit #{page},10
+    </select>
+
+    <select id="getSubmitRecordCode" resultType="string">
+        select code from oj_submit_record
+    </select>
+
+    <select id="getAllSubmitRecordList" resultType="com.example.model.judge.SubmitRecord">
+        select * from oj_submit_record
+    </select>
+<!--得到竞赛-->
+    <select id="getAllMatchSubmitRecordOnlyAC" resultType="com.example.model.judge.SubmitRecord">
+        select * from oj_match_record where mid = #{mid} and title like 'Accept'
+    </select>
+    <select id="getAllMatchSubmitRecordNoLimit" resultType="com.example.model.judge.SubmitRecord">
+        select * from oj_match_record where mid = #{mid}
+    </select>
+<!--    拿到用户的比赛分数-->
+    <select id="getUserMatchResult" resultType="com.example.model.question.MatchResult">
+        select * from oj_match_result where mid =  #{param1} and uid = #{param2}
+    </select>
+<!--    //    更新比赛分数-->
+    <update id="updateUserMatchResult">
+        update oj_match_result set
+                                   results = #{results},
+                                   total_score = #{totalScore}
+        where
+            mid = #{mid} and uid = #{uid}
+    </update>
+
+    <insert id="addUserMatchResult" parameterType="com.example.model.question.MatchResult">
+        insert into oj_match_result values (
+                                            #{id},
+                                            #{mid},
+                                            #{uid},
+                                            #{userName},
+                                            #{results},
+                                            #{totalScore}
+                                           )
+    </insert>
+
+    <select id="getMatchResult" resultType="com.example.model.question.MatchResult">
+        select oj_match_result.id,mid,uid,user_name,results,total_score,url,email  from oj_match_result
+                 left join oj_user on oj_match_result.uid = oj_user.id
+                 where mid = #{mid} order by total_score desc
+    </select>
+    
+    <select id="getUserResolveRecord" resultType="long">
+        select qid from oj_user_resolve where uid = #{uid}
+    </select>
+
+    <insert id="addUserResolve">
+        insert into oj_user_resolve values (null,#{param1},#{param2})
+    </insert>
+
+    <select id="queryUserResolveQuestion" resultType="integer">
+        select count(id) from oj_user_resolve where uid = #{param1} and qid = #{param2}
+    </select>
+
+    <select id="getPerDifficultySolve" resultType="com.example.model.question.UserResolve">
+        select easy_resolve,meddle_resolve,hard_resolve,nightmare_resolve from oj_user where id = #{uid}
+    </select>
+
+    <select id="countPerDifficultyCount" resultType="integer">
+        select count(*) from oj_question where difficulty like #{difficulty}
+    </select>
+</mapper>
