@@ -7,6 +7,7 @@ import com.example.model.judge.SubmitRecord;
 import com.example.model.judge.TestPack;
 import com.example.model.judge.TestResult;
 import com.example.model.judge.TestSample;
+import com.example.model.question.Question;
 import com.example.model.question.TestSamples;
 import com.example.netty.NioWebSocketHandler;
 import com.example.service.question.JudgeService;
@@ -19,8 +20,11 @@ import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,36 +51,33 @@ public class JudgeServiceImpl implements JudgeService {
 
     @Override
     public TestResult doJudge(TestPack testPack) {
-        System.out.println(NioWebSocketHandler.userWebSocketId);
-        NioWebSocketHandler.textWebSocketFrameHandler(
-                NioWebSocketHandler.userWebSocketId.get(String.valueOf(testPack.getUid())),
-                "1","初始化...","初始化完成"
-        );
-//        创建时间
+        //创建时间
         Long time = System.currentTimeMillis();
-//        拉取测试样例
+        //拉取测试样例
         List<TestSample> testSamples = getTestSamples(testPack.getQid());
-
+        //拉取得分点案例
+        List<String> scoreSamples = getScoreSamples(testPack.getQid());
         testPack.setTestSampleList(testSamples);
-//        时间内空间
+        testPack.setTestScoreList(scoreSamples);
+        //时间内空间
         testPack.setMemoryLimit(questionMapper.getQuestionMemoryLimit(testPack.getQid()));
         testPack.setTimeLimit(questionMapper.getQuestionTimeLimit(testPack.getQid()) * 1000);
-//          对测试对象进行设置
+        //对测试对象进行设置
         testPack.setSubmitTime(time);
         testPack.setSubmitTimeFormat(
                 new SimpleDateFormat("yyyy-MM-dd- HH:mm:ss").format(time)
         );
-//        测试结果
+        //测试结果
         TestResult testResult = new TestResult();
         try {
-            //          新建判题机运行
+            //新建判题机运行
             Judger judger = new Judger(testPack);
             testResult = judger.run();
         }finally {
-            //        删除判题机（异步）
+            //删除判题机
             containerUtils.deleteContainer(testPack.getContainerId());
         }
-//        保存记录
+        //保存记录
         return testResult;
     }
 
@@ -86,6 +87,7 @@ public class JudgeServiceImpl implements JudgeService {
      * @return 测试用例集合
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<TestSample> getTestSamples(long id) {
         TestSamples testSamples = questionMapper.getTestSample(id);
 //        json解码
@@ -106,6 +108,24 @@ public class JudgeServiceImpl implements JudgeService {
                     "",
                     false
             ));
+        }
+
+        return testSample;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<String> getScoreSamples(long id) {
+        String  scorePoint = questionMapper.getQuestionScorePoint(id);
+//        json解码
+        JSONArray score = new JSONArray();
+        if(StringUtils.hasText(scorePoint)) {
+            score = new JSONArray(scorePoint);
+        }
+
+        List<String> testSample = new ArrayList<>();
+//        遍历组装
+        for (int i = 0; i < score.length(); i++) {
+            testSample.add(score.get(i).toString());
         }
 
         return testSample;

@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * @author 凯威
+ *
  * 配置要拦截的路径
  */
 @Configuration
@@ -28,13 +28,7 @@ public class AuthWebMvcConfigurer implements WebMvcConfigurer
                 .excludePathPatterns("/getQuestionList/{page}/{uid}")
                 .excludePathPatterns("/getSubmitRecordsWithQid/{qid}/{page}")
                 .excludePathPatterns("/getQuestion/{qid}")
-                .excludePathPatterns("/getMatchList")
-                .excludePathPatterns("/getMatchDetail/{mid}")
                 .excludePathPatterns("/countQuestion")
-                .excludePathPatterns("/getMatchRank/{mid}")
-                .excludePathPatterns("/getBlogList/{page}/{size}/{uid}/{type}")
-                .excludePathPatterns("/queryBlog/{uid}/{bid}")
-                .excludePathPatterns("/getCommentsList/{bid}/{uid}")
         ;
     }
 

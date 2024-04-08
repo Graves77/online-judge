@@ -38,7 +38,15 @@ public class TestResult {
     /**
      * 编译或者运行报错放这里
      */
-
     private String message;
     private String title;
+    /**
+     * 案例得分
+     */
+    private double testScore;
+
+    /**
+     * 得分点得分
+     */
+    private double getScore;
 }

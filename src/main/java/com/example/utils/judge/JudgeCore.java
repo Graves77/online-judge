@@ -58,7 +58,8 @@ public abstract class JudgeCore {
                 testPack.getCode(),
                 null,
                 "Accept",
-                "Accept"
+                "Accept",
+                0,0
         );
 
         // 代码路径
@@ -101,21 +102,21 @@ public abstract class JudgeCore {
 //                执行名
                 executeName = "./a.out";
 //                容器名
-                type = "judge/gcc:v1";
+                type = "echocen/gcc:v1";
 //                文件名
                 testPack.setName("test.cpp");
                 break;
             case "java":
                 compileName = "javac Main.java";
                 executeName = "java Main";
-                type = "judge/openjdk:v1";
+                type = "echocen/openjdk:v1";
                 testPack.setName("Main.java");
                 break;
             case "python":
 //                python不用编译，直接运行
                 isCompile = true;
                 executeName = "python test.py";
-                type = "judge/python:v1";
+                type = "echocen/python:v1";
                 testPack.setName("test.py");
             default:
                 break;
@@ -199,7 +200,6 @@ public abstract class JudgeCore {
                                 .split(",")
                 ));
         testPack.setContainerId(containerId);
-
     }
 
     /**
@@ -268,6 +268,28 @@ public abstract class JudgeCore {
         List<File> files = new ArrayList<>();
 
         for (int i = 0; i < testPack.getTestSampleList().size(); i++) {
+            try {
+                files = Files.walk(Paths.get(path))
+                        .filter(Files::isRegularFile)
+                        .map(Path::toFile)
+                        .collect(Collectors.toList());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        orderFiles(files);
+        return files;
+    }
+
+    /**
+     * 工具函数 加载输出文件
+     * @param path 文件路径
+     * @return 文件
+     */
+    private List<File> loadScoreFiles(String path){
+        List<File> files = new ArrayList<>();
+
+        for (int i = 0; i < testPack.getTestScoreList().size(); i++) {
             try {
                 files = Files.walk(Paths.get(path))
                         .filter(Files::isRegularFile)
@@ -360,14 +382,14 @@ public abstract class JudgeCore {
      * 检查答案
      * @return
      */
-    public void checkAnswer(){
+    public double checkAnswer(){
         List<File> outFiles = loadFiles(userCodePath+"/out");
         List<File> timeFiles = loadFiles(userCodePath+"/time");
-
+        
         //  一致性检查
         if(testPack.getTestSampleList().size() != outFiles.size() || testPack.getTestSampleList().size() != timeFiles.size()){
             // 文件数目不对 这里应该抛自定义异常
-            return;
+            return 0;
         }
 
         List<String> userOutputs = getFilesContent(outFiles);
@@ -378,14 +400,17 @@ public abstract class JudgeCore {
 
         double totalTime = 0.0;
         int totalMemory = 0;
+        double sum = 0;
+        int count = userTimes.size();
+        double append = 100.0/count;
         for (int i = 0; i < userTimes.size(); i++) {
             if(checkError(userOutputs.get(i))){
                 setPackError("代码在运行过程中发生了一些错误，请检查!",userOutputs.get(i));
-                return;
+                return 0;
             }
             if( checkTimeAndMemory(userTimes.get(i))){
                 setPackError("内存/时间超出限制"," 你的时间或者空间超出限制了，尝试优化代码");
-                return;
+                return 0;
             }
             if(checkUserOut(
                     testPack.getTestSampleList().get(i).getOutput(),
@@ -395,14 +420,38 @@ public abstract class JudgeCore {
                 setPackError("WrongAnswer","答案错误,出现在第 " + (i+1) + " 个测试样例");
                 testPack.getTestSampleList().get(i).setUserOutput(userOutputs.get(i));
                 testResult.setTestSample(testPack.getTestSampleList().get(i));
-                return;
+                return sum;
             }
+            sum+=append;
             totalTime += Double.parseDouble(splitTimeAndMemory(userTimes.get(i))[0]);
             totalMemory += Double.parseDouble(splitTimeAndMemory(userTimes.get(i))[1]);
         }
-        testResult.setTime((totalTime / userTimes.size() * 1000));
-        testResult.setMemory((double) (totalMemory / userTimes.size() / 1024));
-        testResult.setPass(true);
+        if(userTimes.size()!=0) {
+            testResult.setTime((totalTime / userTimes.size() * 1000));
+            testResult.setMemory((double) (totalMemory / userTimes.size() / 1024));
+        }
+            testResult.setPass(true);
+            return sum;
+    }
+
+
+    /**
+     * 检查答案
+     * @return
+     */
+    public double checkScorePoint(){
+        int count = testPack.getTestScoreList().size();
+        double avg = 100.0;
+        double sum=0;
+        if(count!=0){
+            avg = 100/count;
+        }
+        for (int i = 0; i < count; i++) {
+        if(testPack.getCode().contains(testPack.getTestScoreList().get(i))){
+            sum+=avg;
+        }
+        }
+        return sum;
     }
 
     /**
@@ -432,7 +481,10 @@ public abstract class JudgeCore {
             s[0] = s[0].split("zerostatus")[1];
         }
         double time = Double.parseDouble(s[0]);
-        int memory = (int) Double.parseDouble(s[1]);
+        int memory = (int) Double.parseDouble(s[1])/1024;
+        // Assuming time is in seconds, convert it to milliseconds for comparison
+        //long timeMillis = (long) (time * 1000);
+        //log.info("提供的过期时间{}--------------实际的过期时间{},提供的内存{}----------实际的内存{}",testPack.getTimeLimit(),time,testPack.getMemoryLimit(),memory);
         if(time > testPack.getTimeLimit() || memory > testPack.getMemoryLimit()){
             return true;
         }

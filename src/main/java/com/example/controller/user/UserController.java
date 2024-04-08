@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
-@RequestMapping("/user")
 @RestController
 @ResponseBody
 public class UserController {
@@ -42,13 +41,11 @@ public class UserController {
     @PostMapping("/getToken")
     public JsonResult getToken(HttpServletRequest request){
         String token = request.getHeader("token");
-
         return new JsonResult(tokenUtil.parseToken(token),State.SUCCESS);
     }
 
     @PostMapping("/changeUserInfo")
     public JsonResult changeUserInfo(@RequestBody User user){
-
         return new JsonResult(userService.changeUserInfo(user),State.SUCCESS,"操作成功!");
     }
 
@@ -61,5 +58,9 @@ public class UserController {
     public JsonResult getUserList(@PathVariable Integer page){
         return new JsonResult(userService.getUserList(page),State.SUCCESS,"获取成功!");
     }
-
+    @PutMapping ("/banUser")
+    public Object banUser(@RequestParam("uid") String uid,@RequestParam("ban") Integer ban){
+        Boolean bandDone = userService.banUser(uid,ban);
+        return new JsonResult(bandDone,bandDone ? State.SUCCESS : State.FAILURE,bandDone?"操作成功!" : "操作失败!");
+    }
 }

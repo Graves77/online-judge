@@ -15,7 +15,7 @@ public class WebSocketProperties {
     /**
      * 监听端口
      */
-    private Integer port = 8080;
+    private Integer port = 8081;
     /**
      * 请求路径
      */

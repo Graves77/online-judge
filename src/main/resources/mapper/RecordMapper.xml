@@ -116,4 +116,5 @@
     <select id="countPerDifficultyCount" resultType="integer">
         select count(*) from oj_question where difficulty like #{difficulty}
     </select>
+
 </mapper>

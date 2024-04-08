@@ -43,15 +43,16 @@ public class TestPack {
      * 必须 : 类型 -> 普通、运行测试、比赛
      */
     private Integer type;
-    /**
-     * 比赛id
-     */
-    @JsonSerialize(using = ToStringSerializer.class)
-    private long mid;
+//    /**
+//     * 比赛id
+//     */
+//    @JsonSerialize(using = ToStringSerializer.class)
+//    private long mid;
     /**
      * 测试样例对象集合
      */
     private List<TestSample> testSampleList = new ArrayList<>();
+    private List<String> testScoreList = new ArrayList<>();
     /**
      * 提交时间
      */

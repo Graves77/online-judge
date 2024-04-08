@@ -26,23 +26,18 @@ public class Judger extends JudgeCore{
         //  初始化
         this.init();
         //  编译
-        NioWebSocketHandler.textWebSocketFrameHandler(
-                NioWebSocketHandler.userWebSocketId.get(String.valueOf(testPack.getUid())),
-                "2","编译中...","编译完毕"
-        );
+        log.info("2.编译中...编译完毕");
         String compile = this.compile();
         System.out.println("编译 :" + compile);
         // 编译结果需要为空或null才是编译成功，可以继续执行代码
         if("".equals(compile) || compile == null || " ".equals(compile)){
             log.info("编译成功");
-            NioWebSocketHandler.textWebSocketFrameHandler(
-                    NioWebSocketHandler.userWebSocketId.get(String.valueOf(testPack.getUid())),
-                    "3","运行中...","运行完毕"
-            );
+            log.info("3.运行中");
             String execute = this.execute();
             System.out.println("运行 :" + execute);
-            checkAnswer();
-
+            log.info("...运行完毕");
+           testResult.setTestScore(checkAnswer());
+           testResult.setGetScore(checkScorePoint());
         }else{
             log.info("编译错误");
             testResult.setPass(false);
@@ -51,10 +46,7 @@ public class Judger extends JudgeCore{
         }
 
         if(testResult.isPass()){
-            NioWebSocketHandler.textWebSocketFrameHandler(
-                    NioWebSocketHandler.userWebSocketId.get(String.valueOf(testPack.getUid())),
-                    "4","返回结果","运行完毕"
-            );
+            log.info("4.返回结果...运行完毕");
         }
         return testResult;
 

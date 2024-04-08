@@ -19,4 +19,5 @@ public interface UserService {
 
     Map<String,Object> getUserList(Integer page);
 
+    Boolean banUser(String uid,Integer ban);
 }

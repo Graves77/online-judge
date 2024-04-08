@@ -29,10 +29,9 @@ public class UserServiceImpl implements UserService {
         if(userMapper.existUser(user.getStudentId()) == 1){
             return new JsonResult(null,State.FAILURE,"此学号已经注册!");
         }
-//
         user.setId(SnowflakeIdWorker.snowFlow.nextId());
         user.setRole("普通用户");
-        user.setUrl(null);
+        user.setUrl("");
         user.setGender("保密");
         user.setPassword(
 //                加密密码
@@ -61,7 +60,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User loadUserInfo(long id) {
         User userById = userMapper.getUserById(id);
-
         userById.setToken(tokenUtil.getToken(userById.getStudentId(),userById.getRole()));
         return userById;
     }
@@ -69,10 +67,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public Map<String,Object> getUserList(Integer page) {
         Map<String,Object> userMap = new HashMap<String,Object>();
-        List<User> userList = userMapper.getUserList(page);
+        int offset = (page - 1) * 15;
+        List<User> userList = userMapper.getUserList(offset,page);
         Integer userCount = userMapper.userCount();
         userMap.put("userList",userList);
         userMap.put("userCount",userCount);
         return userMap;
     }
+    /**
+     * @param uid
+     * @param ban
+     * @return
+     */
+    @Override
+    public Boolean banUser(String uid, Integer ban) {
+        return userMapper.updateUserBanState(uid,ban);
+    }
+
 }

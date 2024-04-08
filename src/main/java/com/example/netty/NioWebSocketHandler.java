@@ -107,6 +107,7 @@ public class NioWebSocketHandler extends SimpleChannelInboundHandler<WebSocketFr
     public static void textWebSocketFrameHandler(ChannelHandlerContext ctx, String code,String title,String message) {
         // 客户端发送过来的内容不进行业务处理，原样返回
         if(!CTX){
+            System.out.println("CTX为false");
             return;
         }
         ctx.channel().writeAndFlush(new TextWebSocketFrame("" +

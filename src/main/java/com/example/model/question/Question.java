@@ -88,4 +88,9 @@ public class Question {
      * 用户是否通过
      */
     private int uid;
+
+    /**
+     * 得分句
+     */
+    private String scorePoint;
 }

@@ -16,13 +16,8 @@ public interface UserMapper {
 
     User getUser(String studentId);
 
-    /**
-     * 得到用户列表根据经验值排序
-     * @return
-     */
-    List<User> getUserListForSort();
 
-    List<User> getUserList(Integer page);
+    List<User> getUserList(int offset,Integer page);
 
     User getUserById(long id);
     boolean changeUserResolve(String difficulty,long id);
@@ -30,6 +25,7 @@ public interface UserMapper {
 
     boolean changeUserInfo(User user);
 
+    boolean updateUserBanState(String uid,Integer ban);
 
     Integer userCount();
 

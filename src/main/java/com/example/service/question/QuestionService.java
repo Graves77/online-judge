@@ -60,5 +60,10 @@ public interface QuestionService {
      */
     List<Question> querySearchQuestionList(int page,String search);
 
-
+    /**
+     * 得到用户解决过的题目
+     * @param uid 用户id
+     * @return 已题目列表
+     */
+    List<Long> getUserResolveQuestionId(long uid);
 }

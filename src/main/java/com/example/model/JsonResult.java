@@ -40,7 +40,7 @@ public class JsonResult<T> {
         this.data = data;
         this.code = code;
         this.msg = msg;
-        this.status = "fail";
+        this.status = "success";
     }
     public JsonResult(T data, String code, String msg, String status){
         this.data = data;

@@ -19,7 +19,7 @@ public class WebSocketUtil extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         Map<String, String> params = handleUrlParam(session.getUri().toString());
         log.info("连接成功,参数 : " + params.toString());
-        switch (Integer.valueOf(params.get("type"))){
+        switch (Integer.valueOf(params.get("type"))) {
             case 10000:
                 log.info("连接判题机");
                 break;
@@ -31,7 +31,7 @@ public class WebSocketUtil extends TextWebSocketHandler {
         // 连接建立后的处理逻辑
     }
 
-    public Map<String, String> handleUrlParam(String requestUrl){
+    public Map<String, String> handleUrlParam(String requestUrl) {
         // 解析URL中的参数
         String[] parts = requestUrl.split("\\?");
         String parameters = parts[1];
@@ -41,13 +41,14 @@ public class WebSocketUtil extends TextWebSocketHandler {
             String[] keyValue = pair.split("=");
             String key = keyValue[0];
             String value = keyValue[1];
-            params.put(key,value);
+            params.put(key, value);
         }
         return params;
     }
 
     /**
      * 收到消息
+     *
      * @param session
      * @param message
      * @throws Exception

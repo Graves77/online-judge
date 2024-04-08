@@ -107,4 +107,6 @@ public interface QuestionMapper {
      * @return
      */
     boolean addTotalCount(int totalPass,int totalAttempt,long id);
+
+    String getQuestionScorePoint(long id);
 }

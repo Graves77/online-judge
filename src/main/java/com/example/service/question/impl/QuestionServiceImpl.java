@@ -1,9 +1,12 @@
 package com.example.service.question.impl;
 
 import com.example.mapper.question.QuestionMapper;
+import com.example.mapper.question.RecordMapper;
 import com.example.model.question.Question;
 import com.example.model.question.TestSamples;
 import com.example.service.question.QuestionService;
+import com.example.utils.SnowflakeIdWorker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +17,14 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
     private QuestionMapper questionMapper;
 
+    @Autowired
+    private RecordMapper recordMapper;
     /**
      * 添加题目
      *
@@ -27,7 +33,9 @@ public class QuestionServiceImpl implements QuestionService {
      */
     @Override
     public boolean addQuestion(Question question) {
+        log.info("-----------question对象数据：{}",question);
         boolean add = false;
+        question.setId(SnowflakeIdWorker.snowFlow.nextId());
         add = questionMapper.insertQuestion(question);
         add = questionMapper.insertTestSamples(question);
         return add;
@@ -78,16 +86,6 @@ public class QuestionServiceImpl implements QuestionService {
         return questionMapper.countQuestion();
     }
 
-//    /**
-//     * 得到用户解决过的题目
-//     *
-//     * @param uid 用户id
-//     * @return 已题目列表
-//     */
-//    @Override
-//    public List<Long> getUserResolveQuestionId(long uid) {
-//        return recordMapper.getUserResolveRecord(uid);
-//    }
 
     @Override
     public List<Question> queryQuestionList(int page,long uid) {
@@ -125,6 +123,16 @@ public class QuestionServiceImpl implements QuestionService {
         return questions;
     }
 
+    /**
+     * 得到用户解决过的题目
+     *
+     * @param uid 用户id
+     * @return 已题目列表
+     */
+    @Override
+    public List<Long> getUserResolveQuestionId(long uid) {
+        return recordMapper.getUserResolveRecord(uid);
+    }
 
 
 }

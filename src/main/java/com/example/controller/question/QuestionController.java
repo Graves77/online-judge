@@ -4,16 +4,22 @@ package com.example.controller.question;
 import com.example.model.JsonResult;
 import com.example.model.question.Question;
 import com.example.service.question.QuestionService;
+import com.example.service.question.UserQuestionService;
 import com.example.utils.State;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class QuestionController {
 
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private UserQuestionService userQuestionService;
 
     @PostMapping("/addQuestion")
     public JsonResult addQuestion(@RequestBody Question question){
@@ -54,13 +60,32 @@ public class QuestionController {
         return new JsonResult(questionService.queryQuestionList(page,uid),State.SUCCESS ,"获取成功");
     }
 
+    @GetMapping(value = "/getUserResolve/{id}")
+    public JsonResult getUserResolveQuestions(@PathVariable long id){
+        return new JsonResult(questionService.getUserResolveQuestionId(id),State.SUCCESS ,"操作成功!");
+
+    }
+
     @PostMapping(value = "/searchQuestion/{page}/{search}")
     public JsonResult serachQuestion(@PathVariable int page,@PathVariable String search){
         page--;
         return new JsonResult(questionService.querySearchQuestionList(page,search),State.SUCCESS ,"查询成功");
     }
 
+    @GetMapping(value = "/getPerDifficultySolve/{uid}")
+    public JsonResult getPerDifficultySolve(@PathVariable long uid){
+        return new JsonResult(userQuestionService.getUserResolve(uid),State.SUCCESS ,"获取成功");
+    }
 
+    /**
+     * 百分比的方式
+     * @param uid
+     * @return
+     */
+    @GetMapping(value = "/getPerDifficultySolveWithPercent/{uid}")
+    public JsonResult getPerDifficultySolveWithPercent(@PathVariable long uid){
+        return new JsonResult(userQuestionService.getUserResolveWithPercent(uid),State.SUCCESS ,"获取成功");
+    }
 
 
 }
